@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2efe8">
+  <meta name="description" content="面向湖北工业大学设计学考研的现代设计史本地背诵工具">
+  <title>设史记｜现代设计史背诵站</title>
+  <link rel="stylesheet" href="styles.css?v=20260715-1">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="设史记首页">
+      <span class="brand-mark">史</span>
+      <span><strong>设史记</strong><small>现代设计史 · 应试背诵</small></span>
+    </a>
+    <div class="exam-badge"><span>目标院校</span><b>湖北工业大学 · 视觉传达</b></div>
+    <button class="plain-button" id="sourceButton" type="button">资料依据</button>
+  </header>
+
+  <div class="app-shell" id="top">
+    <aside class="chapter-rail" aria-label="章节导航">
+      <div class="rail-heading">
+        <span>复习目录</span>
+        <b id="topicTotal">0 题</b>
+      </div>
+      <nav id="chapterNav"></nav>
+      <div class="rail-legend">
+        <span><i class="dot high"></i>高频考点</span>
+        <span><i class="dot medium"></i>中频考点</span>
+        <span><i class="dot normal"></i>基础考点</span>
+      </div>
+      <section class="grading-entry" aria-labelledby="gradingEntryTitle">
+        <small>模拟阅卷</small>
+        <h2 id="gradingEntryTitle">老师阅卷</h2>
+        <p>上传手写答卷，按当前题目逐点给分。</p>
+        <button id="openGraderButton" type="button">上传答卷</button>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="query-zone" aria-labelledby="queryTitle">
+        <div class="query-kicker"><span>任意题目</span><i></i><b>本地资料智能匹配</b></div>
+        <h1 id="queryTitle">今天背哪一道？</h1>
+        <form class="search-form" id="searchForm">
+          <label class="sr-only" for="questionInput">输入现代设计史题目</label>
+          <input id="questionInput" name="question" autocomplete="off" placeholder="例如：比较包豪斯与工艺美术运动" value="名词解释：包豪斯">
+          <button type="submit">生成答案</button>
+        </form>
+        <div class="query-tools">
+          <div class="mode-control" role="group" aria-label="答题类型">
+            <button class="mode active" type="button" data-mode="auto">自动判断</button>
+            <button class="mode" type="button" data-mode="noun">名词解释</button>
+            <button class="mode" type="button" data-mode="essay">简答题</button>
+          </div>
+          <div class="example-list" id="exampleList" aria-label="示例题目"></div>
+        </div>
+      </section>
+
+      <section class="answer-layout" aria-live="polite">
+        <article class="answer-sheet" id="answerSheet">
+          <div class="empty-state">正在读取本地题库…</div>
+        </article>
+
+        <aside class="study-panel" aria-label="背诵进度">
+          <section class="progress-block">
+            <div class="panel-label">我的背诵</div>
+            <div class="progress-number"><strong id="masteredCount">0</strong><span>/ <b id="progressTotal">0</b> 已掌握</span></div>
+            <div class="progress-track"><i id="progressBar"></i></div>
+          </section>
+
+          <section class="panel-section">
+            <div class="panel-label">本题操作</div>
+            <button class="panel-action" id="memoryButton" type="button"><span>背诵遮挡</span><small>隐藏核心词后自测</small></button>
+            <button class="panel-action" id="masterButton" type="button"><span>标记已掌握</span><small>记录在当前浏览器</small></button>
+            <button class="panel-action" id="randomButton" type="button"><span>随机下一题</span><small>从高频考点抽取</small></button>
+          </section>
+
+          <section class="panel-section recent-section">
+            <div class="panel-label">最近复习</div>
+            <div id="recentList" class="recent-list"><span class="muted">尚无记录</span></div>
+          </section>
+
+          <blockquote>“先定性，再分点；代表作单列，结论回扣史论地位。”</blockquote>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="sourceDialog" class="source-dialog">
+    <button class="dialog-close" id="closeDialog" type="button" aria-label="关闭">×</button>
+    <p class="dialog-eyebrow">LOCAL SOURCES</p>
+    <h2>资料依据</h2>
+    <p>题库从当前文件夹内的课程资料生成，检索与答案组合均在浏览器本地完成。</p>
+    <ul id="sourceList"></ul>
+    <div class="dialog-note"><b>作答规范</b><span>名词解释保持一个完整段落，代表作另起一行；简答题按得分点分层，比较题先分别交代背景。</span></div>
+  </dialog>
+
+  <dialog id="graderDialog" class="grader-dialog">
+    <button class="dialog-close" id="closeGraderDialog" type="button" aria-label="关闭阅卷">×</button>
+    <header class="grader-head">
+      <p class="dialog-eyebrow">POSTGRADUATE EXAM MARKING</p>
+      <h2>老师阅卷</h2>
+      <p>当前题目：<b id="graderQuestionTitle">包豪斯</b><span id="graderMaxScore">名词解释 · 满分 5 分</span></p>
+    </header>
+
+    <div class="grader-workspace">
+      <section class="grader-input-panel" aria-labelledby="uploadTitle">
+        <div class="grader-step"><span>01</span><div><h3 id="uploadTitle">上传答卷</h3><small>支持拍照或相册图片</small></div></div>
+        <label class="answer-upload" for="answerImageInput">
+          <input id="answerImageInput" type="file" accept="image/*" capture="environment">
+          <strong>选择答卷照片</strong>
+          <span>JPG、PNG、手机拍照均可</span>
+        </label>
+        <figure class="answer-preview" id="answerPreview" hidden>
+          <img id="answerPreviewImage" alt="待阅答卷预览">
+          <figcaption id="answerFileName"></figcaption>
+        </figure>
+        <button class="grader-button secondary" id="recognizeAnswerButton" type="button" disabled>识别答卷文字</button>
+        <div class="ocr-progress" id="ocrProgress" hidden><span id="ocrStatus">准备识别</span><i><b id="ocrProgressBar"></b></i></div>
+        <p class="privacy-note">图片仅在当前浏览器中识别，不上传到网站服务器。</p>
+      </section>
+
+      <section class="grader-text-panel" aria-labelledby="recognizedTitle">
+        <div class="grader-step"><span>02</span><div><h3 id="recognizedTitle">校对识别文本</h3><small>手写识别有误时可直接修改</small></div></div>
+        <label class="sr-only" for="recognizedAnswerText">识别出的答卷文字</label>
+        <textarea id="recognizedAnswerText" placeholder="上传照片识别，或直接在这里输入你的答案……"></textarea>
+        <div class="text-metrics"><span id="recognizedCharCount">0 字</span><span>阅卷以校对后的文字为准</span></div>
+        <button class="grader-button primary" id="gradeAnswerButton" type="button">按得分点阅卷</button>
+      </section>
+    </div>
+
+    <section class="grading-result" id="gradingResult" hidden aria-live="polite">
+      <div class="grading-summary">
+        <div><small>本次得分</small><strong id="gradingScore">0</strong><span id="gradingScoreMax">/ 5</span></div>
+        <p id="gradingVerdict"></p>
+      </div>
+      <div class="grading-breakdown" id="gradingBreakdown"></div>
+      <div class="grading-final-comment" id="gradingFinalComment"></div>
+    </section>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="vendor/tesseract.min.js?v=5.1.1"></script>
+  <script src="data.js?v=20260715-1"></script>
+  <script src="app.js?v=20260715-3"></script>
+</body>
+</html>
