@@ -194,6 +194,14 @@
     return String(text || "").replace(/\s/g, "").length;
   }
 
+  function contentCountHtml(text, label, minimum = 0) {
+    const count = wordsCount(text);
+    const status = minimum
+      ? `<em class="${count >= minimum ? "passed" : "failed"}">${count >= minimum ? `已达到 ${minimum} 字下限` : `还差 ${minimum - count} 字`}</em>`
+      : "";
+    return `<p class="content-count"><span>${escapeHtml(label)}</span><strong>${count}</strong><span>字</span>${status}</p>`;
+  }
+
   function compact(value, limit) {
     const text = String(value || "").trim();
     if (text.length <= limit) return text;
@@ -278,7 +286,7 @@
 
   function nounAnswer(item, question) {
     const paragraph = `${item.background}${item.features}${item.impact}`;
-    const count = wordsCount(paragraph) + wordsCount((item.works || []).join(""));
+    const count = wordsCount(paragraph);
     const points = [
       { text: `背景定位：${item.background}`, score: "1.5" },
       { text: `核心特征：${splitPoints(item.features).slice(0, 2).join("；")}`, score: "2" },
@@ -294,7 +302,7 @@
     state.currentMaxScore = 5;
     state.currentAnswerTitle = item.title;
     refs.answer.innerHTML = headHtml(item.title, "名词解释", item, question, count)
-      + sectionHtml("01", "考场成稿", "总—分—总，正文保持为一个完整段落", `<p class="exam-paragraph">${highlight(paragraph)}</p>${worksLine(item)}`)
+      + sectionHtml("01", "考场成稿", "总—分—总，正文保持为一个完整段落", `<p class="exam-paragraph">${highlight(paragraph)}</p>${contentCountHtml(paragraph, "名词解释正文", 200)}${worksLine(item)}`)
       + visualHtml(item)
       + scoreHtml(points)
       + memoryMapHtml(item.title, mapBranches, 5)
@@ -303,7 +311,8 @@
 
   function essayAnswer(item, question) {
     const features = splitPoints(item.features);
-    const combined = `${item.background}${item.features}${item.impact}`;
+    const impactParagraph = `${item.impact}由此可见，${item.title}不仅形成了鲜明的形式语言，也在现代设计由观念转向制度、生产与生活方式的进程中占有重要位置。`;
+    const combined = `${item.background}${item.features}${impactParagraph}${(item.works || []).join("")}`;
     const points = [
       { text: `概念与背景：${item.background}`, score: "3" },
       { text: `核心主张：${features.slice(0, 2).join("；")}`, score: "4" },
@@ -319,10 +328,10 @@
     state.currentRubric = points;
     state.currentMaxScore = 15;
     state.currentAnswerTitle = `简述${item.title}`;
-    refs.answer.innerHTML = headHtml(`简述${item.title}`, "简答题 · 单一考点", item, question, wordsCount(combined) + 120)
+    refs.answer.innerHTML = headHtml(`简述${item.title}`, "简答题 · 单一考点", item, question, wordsCount(combined))
       + sectionHtml("01", "概念与背景", "先用名词解释完成定性", `<p class="exam-paragraph">${highlight(item.background)}</p>${worksLine(item)}`)
       + sectionHtml("02", "主要特征", "按序号展开，每一点先写关键词", `<ol class="point-list">${features.map((point) => `<li>${highlight(point)}</li>`).join("")}</ol>`)
-      + sectionHtml("03", "影响与设计史地位", "回到工业化、现代设计体系或视觉语言评价", `<p class="exam-paragraph">${highlight(item.impact)}由此可见，${escapeHtml(item.title)}不仅形成了鲜明的形式语言，也在现代设计由观念转向制度、生产与生活方式的进程中占有重要位置。</p>`)
+      + sectionHtml("03", "影响与设计史地位", "回到工业化、现代设计体系或视觉语言评价", `<p class="exam-paragraph">${highlight(impactParagraph)}</p>${contentCountHtml(combined, "简答题正文")}`)
       + visualHtml(item)
       + scoreHtml(points)
       + memoryMapHtml(item.title, mapBranches, 15)
@@ -345,7 +354,8 @@
       ["影响地位", compact(left.impact, 48), compact(right.impact, 48)],
     ];
     const conclusion = `${left.title}方面，${compact(left.impact, 42)}${right.title}方面，${compact(right.impact, 42)}二者说明现代设计始终在功能与装饰、手工与机器、个性与社会服务之间调整。对当代视觉传达而言，既要尊重媒介生产，也要回应使用者与文化语境。`;
-    const count = wordsCount(leftBackground + rightBackground + commonPoints.join("") + differences.flat().join("") + conclusion);
+    const comparisonContent = leftBackground + rightBackground + commonPoints.join("") + differences.flat().join("") + conclusion;
+    const count = wordsCount(comparisonContent);
     const scorePoints = [
       { text: `双方背景：${left.title}——${leftBackground}；${right.title}——${rightBackground}`, score: "3" },
       { text: `代表作：${left.title}——${(left.works || []).join("、") || "相关代表作品"}；${right.title}——${(right.works || []).join("、") || "相关代表作品"}`, score: "1" },
@@ -369,7 +379,7 @@
       + sectionHtml("01", "分别解释背景", "先各自定性，再进入比较", `<div class="compare-intros"><article><h4>A · ${escapeHtml(left.title)}</h4><p>${highlight(leftBackground)}</p>${left.works && left.works.length ? `<span class="mini-work">代表作：${left.works.map(escapeHtml).join("、")}</span>` : ""}</article><article><h4>B · ${escapeHtml(right.title)}</h4><p>${highlight(rightBackground)}</p>${right.works && right.works.length ? `<span class="mini-work">代表作：${right.works.map(escapeHtml).join("、")}</span>` : ""}</article></div>`)
       + sectionHtml("02", "相同点", "先求同，建立共同的设计史坐标", `<ol class="point-list">${commonPoints.map((point) => `<li>${highlight(point)}</li>`).join("")}</ol>`)
       + sectionHtml("03", "不同点", "从主张、形式方法和影响三个维度对照", `<div class="difference-table">${differences.map((row) => `<div class="difference-row"><b>${escapeHtml(row[0])}</b><span>${highlight(row[1])}</span><span>${highlight(row[2])}</span></div>`).join("")}</div>`)
-      + sectionHtml("04", "影响、联系与总结启示", "最后回扣现代设计的发展逻辑", `<p class="exam-paragraph">${highlight(conclusion)}</p>`)
+      + sectionHtml("04", "影响、联系与总结启示", "最后回扣现代设计的发展逻辑", `<p class="exam-paragraph">${highlight(conclusion)}</p>${contentCountHtml(comparisonContent, "比较题正文")}`)
       + visualHtml(left.image ? left : right)
       + scoreHtml(scorePoints)
       + memoryMapHtml(title, mapBranches, 15)

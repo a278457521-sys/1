@@ -121,6 +121,11 @@ h1 { position: relative; z-index: 1; margin: 12px 0 24px; font: 700 clamp(28px, 
 .section-heading small { grid-column: 2; color: var(--muted); font-size: 9px; }
 .exam-paragraph { margin: 0; color: #343531; font: 15px/2.05 STSong, SimSun, serif; text-align: justify; }
 .exam-paragraph mark, .point-list mark { padding: 1px 2px; color: var(--red-dark); background: #f5dfb0; }
+.content-count { display: flex; align-items: baseline; gap: 5px; margin: 13px 0 0; padding-top: 9px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 10px; }
+.content-count strong { color: var(--red-dark); font: 800 18px/1 Georgia, serif; }
+.content-count em { margin-left: auto; font-style: normal; font-weight: 800; }
+.content-count em.passed { color: var(--green); }
+.content-count em.failed { color: var(--red-dark); }
 .work-line { margin: 17px 0 0; padding: 12px 15px; border-left: 4px solid var(--red); color: #353631; background: #ebe7de; font-size: 13px; line-height: 1.7; }
 .work-line b { color: var(--red-dark); }
 .point-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: points; }
@@ -324,6 +329,8 @@ blockquote { margin: 24px 0 0; padding: 14px 0 14px 14px; border-left: 3px solid
   .answer-actions { margin-top: 15px; }
   .answer-section { padding: 22px 0; }
   .exam-paragraph { font-size: 14px; line-height: 2; }
+  .content-count { flex-wrap: wrap; }
+  .content-count em { width: 100%; margin-left: 0; }
   .score-list, .compare-intros { grid-template-columns: 1fr; }
   .memory-root { width: 88%; margin-bottom: 24px; }
   .memory-root::after { height: 12px; }
