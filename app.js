@@ -263,22 +263,22 @@
     const answers = compareWith
       ? [
           {
-            analysis: `判断两者是否接受机器生产，再比较其材料、形式与服务对象。${item.title}强调${compact(item.features, 55)}；${compareWith.title}强调${compact(compareWith.features, 55)}。`,
-            answer: `${item.title}与${compareWith.title}处在现代设计转型的不同位置：前者体现${compact(item.features, 48)}，后者体现${compact(compareWith.features, 48)}。二者共同推动设计回应新的社会需求，但对手工和工业生产的态度及实现路径并不相同。`,
+            analysis: `判断两者是否接受机器生产，再比较其材料、形式与服务对象。${item.title}的核心特征是：${item.features}；${compareWith.title}的核心特征是：${compareWith.features}。`,
+            answer: `${item.title}与${compareWith.title}处在现代设计转型的不同位置。${item.title}体现为：${item.features}；${compareWith.title}体现为：${compareWith.features}。二者共同推动设计回应新的社会需求，但对手工和工业生产的态度及实现路径并不相同。`,
           },
           {
             analysis: `从“可继承原则”和“应避免局限”两方面回答，并联系视觉传达中的媒介、受众与生产效率。`,
-            answer: `当代视觉传达可从${item.title}吸收${compact(item.impact, 45)}，从${compareWith.title}吸收${compact(compareWith.impact, 45)}。实践中应兼顾文化表达、媒介技术与大众传播，避免只追求形式或脱离真实使用场景。`,
+            answer: `当代视觉传达可从${item.title}吸收以下经验：${item.impact}；也可从${compareWith.title}吸收以下经验：${compareWith.impact}。实践中应兼顾文化表达、媒介技术与大众传播，避免只追求形式或脱离真实使用场景。`,
           },
         ]
       : [
           {
             analysis: `先从背景确认它面对的问题，再用核心特征说明方法，最后以影响评价功能、技术与审美是否统一。`,
-            answer: `${item.title}产生于${compact(item.background, 52)}。它通过${compact(item.features, 72)}来协调功能、技术和审美，并以${compact(item.impact, 55)}确立其设计史意义。`,
+            answer: `${item.title}的背景是：${item.background}；其核心特征是：${item.features}；其影响与设计史意义是：${item.impact}`,
           },
           {
             analysis: `选择一个品牌视觉系统、公共信息设计或数字界面，从功能、形式、媒介和受众四方面对应考点。`,
-            answer: `可选择当代公共信息视觉系统作为案例：先以清晰层级满足识别功能，再利用数字媒介和标准化组件提高传播效率，同时保留符合文化语境的视觉特征。这与${item.title}所体现的${compact(item.features, 55)}形成对应。`,
+            answer: `可选择当代公共信息视觉系统作为案例：先以清晰层级满足识别功能，再利用数字媒介和标准化组件提高传播效率，同时保留符合文化语境的视觉特征。这与${item.title}的核心特征形成对应：${item.features}；从其历史影响看，案例还应吸收以下经验：${item.impact}`,
           },
         ];
     return sectionHtml("?", "扩展思考", "先独立口述，再展开参考分析核对", `<ol class="reflection-list">${questions.map((question) => `<li>${escapeHtml(question)}</li>`).join("")}</ol><button class="reflection-toggle" type="button" data-reflection-toggle aria-expanded="false">查看答案</button><div class="reflection-answers" hidden>${answers.map((answer, index) => `<article><h4>思考 ${index + 1}</h4><p><b>分析：</b>${highlight(answer.analysis)}</p><p><b>参考解答：</b>${highlight(answer.answer)}</p></article>`).join("")}</div>`);
