@@ -4,6 +4,8 @@ from pathlib import Path
 
 from docx import Document
 
+from pdf_core_topics import PDF_CORE_TOPICS
+
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "世界现代设计史随堂测试知识点整理.docx"
@@ -343,10 +345,22 @@ def add_deco_style_sources(items):
     items.insert(insert_at, item)
 
 
+def add_pdf_core_topics(items):
+    existing_titles = {item["title"] for item in items}
+    for index, spec in enumerate(PDF_CORE_TOPICS, start=1):
+        if spec["title"] in existing_titles:
+            raise ValueError(f"Duplicate PDF core topic: {spec['title']}")
+        item = dict(spec)
+        item["id"] = f"topic-pdf-{index:03d}"
+        items.append(item)
+        existing_titles.add(item["title"])
+
+
 def main():
     items = parse_source()
     add_deco_style_sources(items)
     add_sullivan(items)
+    add_pdf_core_topics(items)
     ensure_works(items)
     ensure_noun_length(items)
     chapters = []
@@ -357,6 +371,7 @@ def main():
         "generatedFrom": [
             "世界现代设计史随堂测试知识点整理.docx",
             "现代设计史四题复习总结.docx",
+            "蝴蝶学姐世界现代设计史docx(1).pdf",
         ],
         "chapters": chapters,
         "items": items,
