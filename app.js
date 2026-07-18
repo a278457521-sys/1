@@ -289,7 +289,7 @@
     const count = wordsCount(paragraph);
     const points = [
       { text: `背景定位：${item.background}`, score: "1.5" },
-      { text: `核心特征：${splitPoints(item.features).slice(0, 2).join("；")}`, score: "2" },
+      { text: `核心特征（完整${splitPoints(item.features).length}点）：${splitPoints(item.features).join("；")}`, score: "2" },
       { text: `影响与地位：${item.impact}`, score: item.works && item.works.length ? "1" : "1.5" },
     ];
     if (item.works && item.works.length) points.push({ text: `代表作：${item.works.join("、")}`, score: "0.5" });

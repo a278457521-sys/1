@@ -38,6 +38,13 @@ function functionSource(source, name, nextName) {
   return source.slice(start, end);
 }
 
+function featurePoints(value) {
+  const text = String(value || "").trim();
+  const numbered = text.split(/[①②③④⑤⑥⑦⑧⑨⑩]/).map((part) => part.trim()).filter(Boolean);
+  if (numbered.length >= 3) return numbered;
+  return text.split(/[；;。]/).map((part) => part.trim()).filter((part) => part.length >= 8);
+}
+
 test("每个题库条目都配置真实代表作品", () => {
   const missing = loadData().items
     .filter((item) => !Array.isArray(item.works) || item.works.length === 0)
@@ -66,4 +73,30 @@ test("PDF核心扩展包含58个重点考点和四个新章节", () => {
   assert.equal(missingTitles.length, 0, `缺少PDF核心考点：${missingTitles.join("、")}`);
   assert.equal(missingChapters.length, 0, `缺少PDF章节：${missingChapters.join("、")}`);
   assert.equal(data.items.length, 142, `题库总数应为142，实际为${data.items.length}`);
+});
+
+test("名词解释阅卷得分点展示全部核心特征", () => {
+  const source = fs.readFileSync(path.join(root, "app.js"), "utf8");
+  const nounSource = functionSource(source, "nounAnswer", "essayAnswer");
+
+  assert.equal(nounSource.includes("splitPoints(item.features).slice(0, 2)"), false, "核心特征仍只显示前两项");
+  assert.equal(nounSource.includes("splitPoints(item.features).join"), true, "名词解释未合并展示全部核心特征");
+});
+
+test("所有考点至少包含三个明确且详细的核心特征", () => {
+  const incomplete = loadData().items.filter((item) => {
+    const length = String(item.features || "").replace(/\s/g, "").length;
+    return length < 90 || featurePoints(item.features).length < 3;
+  });
+
+  assert.equal(incomplete.length, 0, `核心特征不完整：${incomplete.map((item) => item.title).join("、")}`);
+});
+
+test("德国工业同盟覆盖完整应试得分链条", () => {
+  const item = loadData().items.find((entry) => entry.title === "德国工业同盟");
+  assert.ok(item, "缺少德国工业同盟");
+  assert.ok(featurePoints(item.features).length >= 5, "德国工业同盟核心特征少于5点");
+  for (const keyword of ["政府", "艺术", "工业", "标准化", "企业", "科隆论战", "包豪斯"]) {
+    assert.equal(item.features.includes(keyword), true, `德国工业同盟缺少关键词：${keyword}`);
+  }
 });
